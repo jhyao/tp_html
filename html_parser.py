@@ -287,3 +287,6 @@ if __name__ == '__main__':
     parser = WebPageParser(template_file='samples/basic_template.html')
     data = parser.parser(page_file='samples/basic_sample.html')
     print(json.dumps(data, ensure_ascii=False))
+    parser = WebPageParser(template_file='samples/complex_template.html')
+    data = parser.parser(page_file='samples/complex_sample.html')
+    print(json.dumps(data, ensure_ascii=False))

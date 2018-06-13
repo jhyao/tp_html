@@ -1,12 +1,54 @@
 <div id="container">
     <div class="column-1">
         <!--dict in list-->
-        <ul class="column-1-ul" p-value="true" p-name="list" p-type="list">
+        <ul class="column-1-ul" p-value="true" p-name="user_list" p-type="list">
             <li p-value="true" p-type="dict">
-
+                <div class="dict-data-container">
+                    <a class="user-name" p-value="true" p-name="name link title" p-item="string href title"></a>
+                    <p class="user-age" p-value="true" p-name="age"></p>
+                    <div class="sub-div">
+                        <p class="user-fans-num" p-value="true" p-name="fans_num"></p>
+                        <p class="user-follow-num" p-value="true" p-name="follow_num"></p>
+                    </div>
+                </div>
             </li>
         </ul>
     </div>
-    <div class="column-2"></div>
-    <div class="column-3"></div>
+    <div class="column-2">
+        <!--list in dict-->
+        <div class="dict-data-container" p-value="true" p-name="user_all" p-type="dict">
+            <a class="user-name" p-value="true" p-name="name link title" p-item="string href title"></a>
+            <p class="user-age" p-value="true" p-name="age"></p>
+            <div class="sub-div">
+                <p class="user-fans-num" p-value="true" p-name="fans_num"></p>
+                <p class="user-follow-num" p-value="true" p-name="follow_num"></p>
+            </div>
+            <ul class="image-list" p-value="true" p-name="images" p-type="list">
+                <li class="image-item">
+                    <a p-value="true" p-item="href"></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="column-3">
+        <!--dict in dict-->
+        <div class="dict-data-container" p-value="true" p-name="user_info" p-type="dict">
+            <div class="profile" p-value="true" p-name="profile" p-type="dict">
+                <a class="user-name" p-value="true" p-name="name link title" p-item="string href title"></a>
+                <p class="user-age" p-value="true" p-name="age"></p>
+            </div>
+            <div class="sub-div" p-value="true" p-name="counts" p-type="dict">
+                <p class="user-fans-num" p-value="true" p-name="fans_num"></p>
+                <p class="user-follow-num" p-value="true" p-name="follow_num"></p>
+            </div>
+        </div>
+    </div>
+    <div class="column-4">
+        <!--list in list-->
+        <ul class="image-list" p-value="true" p-name="image_tags" p-type="list">
+            <ul class="image-tags" p-value="true" p-type="list">
+                <p class="tag" p-value="true"></p>
+            </ul>
+        </ul>
+    </div>
 </div>

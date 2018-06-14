@@ -1,4 +1,3 @@
-import json
 from html.parser import HTMLParser
 import logging
 
@@ -10,23 +9,16 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 class PNode(object):
-    def __init__(self, tag, _class=None, id=None, is_data=False, data_type=None, data_items=None, data_names=None,
+    def __init__(self, tag, selector=None, is_data=False, data_type=None, data_items=None, data_names=None,
                  data_defaults=None):
         self.tag = tag
-        self._class = _class
-        self.id = id
-        self.selector = self._get_selector()
+        self.selector = selector
         self.is_data = is_data
         self.data_type = data_type
         self.data_items = data_items
         self.data_names = data_names
         self.data_defaults = data_defaults
         self.children = []
-
-    def _get_selector(self):
-        id = ('#' + self.id) if self.id else ''
-        cls = ('.' + '.'.join([item for item in self._class.split(' ') if item])) if self._class else ''
-        return self.tag + id + cls
 
     def is_data_node(self):
         return self.is_data
@@ -108,10 +100,19 @@ class TemplateParser(HTMLParser):
         data_names = data_names.split(' ') if data_names else []
         data_defaults = attrs_dict.get('p-default', '')
         data_defaults = data_defaults.split(' ') if data_defaults else []
-        node = PNode(tag, _class=cls, id=id, is_data=is_data, data_type=data_type, data_items=data_items,
+        if tag == 'p-data':
+            selector = attrs_dict.get('selector', None)
+        else:
+            selector = self._get_selector(tag, id, cls)
+        node = PNode(tag, selector=selector, is_data=is_data, data_type=data_type, data_items=data_items,
                      data_names=data_names,
                      data_defaults=data_defaults)
         return node
+
+    def _get_selector(self, tag, id=None, _class=None):
+        id = ('#' + id) if id else ''
+        cls = ('.' + '.'.join([item for item in _class.split(' ') if item])) if _class else ''
+        return tag + id + cls
 
     def handle_endtag(self, tag):
         if tag in self.ignore_tags:
@@ -162,19 +163,44 @@ class TemplateParser(HTMLParser):
 
     def merge_with_child(self, root:PNode):
         child = root.children[0]
-        root.selector += ' > ' + child.selector
+        if child.selector:
+            root.selector += ' > ' + child.selector
         root.children = child.children
         root.tag = child.tag
-        root.id = child.id
-        root._class = child._class
         root.is_data = child.is_data
         root.data_defaults = child.data_defaults
         root.data_names = child.data_names
         root.data_items = child.data_items
         root.data_type = child.data_type
 
-    # def dict_structure(self):
+    def save_template(self, file_path):
+        f = open(file_path, 'x')
+        self._save_tree(self.root, f)
+        f.close()
 
+    def _save_tree(self, root:PNode, f, level=0):
+        line = '    ' * level + '<p-data'
+        if root.selector:
+            line += ' selector="{}"'.format(root.selector)
+        if root.is_data:
+            line += ' p-value="true"'
+        if root.data_type:
+            line += ' p-type="{}"'.format(root.data_type)
+        if root.data_names:
+            line += ' p-name="{}"'.format(' '.join(root.data_names))
+        if root.data_items:
+            line += ' p-item="{}"'.format(' '.join(root.data_items))
+        if root.data_defaults:
+            line += ' p-default="{}"'.format(' '.join(root.data_defaults))
+        if root.children:
+            line += '>\n'
+            f.write(line)
+            for child in root.children:
+                self._save_tree(child, f, level=level + 1)
+            f.write('    ' * level + '</p-data>\n')
+        else:
+            line += '></p-data>\n'
+            f.write(line)
 
 class WebPageParser(object):
     def __init__(self, template=None, template_file=None, template_text=None):
@@ -196,14 +222,17 @@ class WebPageParser(object):
 
     def _get_select(self, soup, node:PNode):
         selector = node.selector
-        select = soup.select(selector)
-        if select:
-            if len(select) > 1:
-                logger.warning('more than one data block matched for <{}>, use the first one'.format(node))
-            return select[0]
+        if selector:
+            select = soup.select(selector)
+            if select:
+                if len(select) > 1:
+                    logger.warning('more than one data block matched for <{}>, use the first one'.format(node))
+                return select[0]
+            else:
+                logger.warning('data not found from <{}>'.format(node))
+                return None
         else:
-            logger.warning('data not found from <{}>'.format(node))
-            return None
+            return soup
 
 
     def _parser(self, soup, node:PNode):
@@ -282,11 +311,9 @@ class WebPageParser(object):
         else:
             return soup.attrs.get(item, None)
 
-
 if __name__ == '__main__':
-    parser = WebPageParser(template_file='samples/basic_template.html')
-    data = parser.parser(page_file='samples/basic_sample.html')
-    print(json.dumps(data, ensure_ascii=False))
-    parser = WebPageParser(template_file='samples/complex_template.html')
-    data = parser.parser(page_file='samples/complex_sample.html')
-    print(json.dumps(data, ensure_ascii=False))
+    template = TemplateParser(template_file='samples/pixiv_user_template.html')
+    template.save_template('samples/pixiv_user_template.min.html')
+    parser = WebPageParser(template_file='samples/pixiv_user_template.min.html')
+    data = parser.parser(page_file='samples/pixiv_user.html')
+    print(data)

@@ -177,7 +177,7 @@ class TemplateParser(HTMLParser):
         root.data_items = child.data_items
         root.data_type = child.data_type
 
-    def save_template(self, file_path):
+    def save(self, file_path):
         f = open(file_path, 'x')
         self._save_tree(self.root, f)
         f.close()
@@ -210,7 +210,7 @@ class WebPageParser(object):
     def __init__(self, template=None, template_file=None, template_text=None):
         self.template = template or TemplateParser(template_file=template_file, template_text=template_text)
 
-    def parser(self, page_url=None, page_file=None, page_text=None, encoding='utf-8'):
+    def parse(self, page_url=None, page_file=None, page_text=None, encoding='utf-8'):
         if page_url:
             page_text = requests.get(page_url).text
         elif page_file:
@@ -221,7 +221,7 @@ class WebPageParser(object):
         else:
             return
         soup = BeautifulSoup(page_text, 'html.parser')
-        data = self._parser(soup, self.template.root)
+        data = self._parse(soup, self.template.root)
         return data
 
     def _get_select(self, soup, node:PNode):
@@ -239,7 +239,7 @@ class WebPageParser(object):
             return soup
 
 
-    def _parser(self, soup, node:PNode):
+    def _parse(self, soup, node:PNode):
         data = None
         if node.is_data:
             if node.data_type == 'list':
@@ -253,7 +253,7 @@ class WebPageParser(object):
             for child_node in node.children:
                 child_soup = self._get_select(soup, child_node)
                 if child_soup:
-                    data.update(self._parser(child_soup, child_node))
+                    data.update(self._parse(child_soup, child_node))
         return data
 
     def _parser_list(self, soup, node):
@@ -265,7 +265,7 @@ class WebPageParser(object):
         selector = child_node.selector
         item_soups = soup.select(selector)
         for item in item_soups:
-            data.append(self._parser(item, child_node))
+            data.append(self._parse(item, child_node))
         if node.data_names:
             return {node.data_names[0]: data}
         else:
@@ -276,7 +276,7 @@ class WebPageParser(object):
         for child_node in node.children:
             child_soup = self._get_select(soup, child_node)
             if child_soup:
-                data.update(self._parser(child_soup, child_node))
+                data.update(self._parse(child_soup, child_node))
         if node.data_names:
             return {node.data_names[0]: data}
         else:
@@ -297,7 +297,7 @@ class WebPageParser(object):
                 logger.warning('invalid template format on node <{}>'.format(node))
             for child_node in node.children:
                 child_soup = self._get_select(soup, child_node)
-                child_data = self._parser(child_soup, child_node)
+                child_data = self._parse(child_soup, child_node)
                 if not isinstance(child_data, dict):
                     logger.warning('invalid template node <{}>'.format(child_node))
                 else:

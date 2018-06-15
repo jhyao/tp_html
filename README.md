@@ -1,13 +1,28 @@
 # Template Parser HTML
-## Introduction
 This tool can help get useful data from html web page. It parses html page with the template file which marks data that you need with special attributes. The template file positions html blocks that contain data, and describes types, names and structures of data. You can modify an example page file to get it, or write a basic html structure that can position your data. I suggest you to use the first method, the tool can delete irrelevant parts and organize html tree automatically.
+## install
+```
+pip install tp_html
+```
 ## How to use
 ```python
+from tp_html import WebPageParser, TemplateParser
+
+# get template
+template = TemplateParser(template_file='samples/basic_template.html')
+
+# save template
+template.save('samples/basic_template.min.html')
+
+# get parser
 parser = WebPageParser(template_file='samples/basic_template.html')
 parser = WebPageParser(template_text='...')
-data = parser.parser(page_file='samples/basic_sample.html', encoding='urf-8')
-data = parser.parser(page_url='http://.....')
-data = parser.parser(page_text='.....')
+parser = WebPageParser(template=template)
+
+# parse data
+data = parser.parse(page_file='samples/basic_sample.html', encoding='urf-8')
+data = parser.parse(page_url='http://.....')
+data = parser.parse(page_text='.....')
 ```
 ## Template file
 ### string
@@ -348,9 +363,9 @@ data:
 The tool also provide a method to save minimal template into a file. It will have a faster template building speed with the minimal template file.
 ```python
 template = TemplateParser(template_file='samples/pixiv_user_template.html')
-template.save_template('samples/pixiv_user_template.min.html')
+template.save('samples/pixiv_user_template.min.html')
 parser = WebPageParser(template_file='samples/pixiv_user_template.min.html')
-data = parser.parser(page_file='samples/pixiv_user.html')
+data = parser.parse(page_file='samples/pixiv_user.html')
 ```
 minimal template:
 ```html
@@ -371,23 +386,23 @@ test code:
 ```python
 parser = WebPageParser(template_file='samples/basic_template.html')
 timefunc.timer_auto(TemplateParser, template_file='samples/basic_template.html')
-timefunc.timer_auto(parser.parser, page_file=r'samples/basic_sample.html')
+timefunc.timer_auto(parser.parse, page_file=r'samples/basic_sample.html')
 ```
 result:
 ```
 basic_template.html
 TemplateParser AVG(1000): 1.251ms
-parser AVG(100): 3.2599ms
+parse AVG(100): 3.2599ms
 
 complex_template.html
 TemplateParser AVG(1000): 1.6005ms
-parser AVG(100): 6.265ms
+parse AVG(100): 6.265ms
 
 pixiv_user_template.html
 TemplateParser AVG(10): 24.7ms
-parser AVG(10): 34.4997ms
+parse AVG(10): 34.4997ms
 
 pixiv_user_template.min.html
 TemplateParser AVG(1000): 760.001183us
-parser AVG(10): 31.2003ms
+parse AVG(10): 31.2003ms
 ```

@@ -381,12 +381,12 @@ minimal template:
 </p-data>
 ```
 # Benchmark
-Time test for templates in samples folder. Test tool is [timefunc](https://github.com/jhyao/timefunc)  
+Time test for templates in samples folder. Test tool is [timefunc](https://github.com/jhyao/functime)  
 test code:
 ```python
 parser = WebPageParser(template_file='samples/basic_template.html')
-timefunc.timer_auto(TemplateParser, template_file='samples/basic_template.html')
-timefunc.timer_auto(parser.parse, page_file=r'samples/basic_sample.html')
+functime.func_time(TemplateParser, template_file='samples/basic_template.html')
+functime.func_time(parser.parse, page_file='samples/basic_sample.html')
 ```
 result:
 ```

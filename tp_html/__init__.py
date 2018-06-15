@@ -1,3 +1,7 @@
+
+name = 'tp_html'
+__all__ = ['TemplateParser', 'WebPageParser']
+
 from html.parser import HTMLParser
 import logging
 
@@ -310,10 +314,3 @@ class WebPageParser(object):
             return soup.string
         else:
             return soup.attrs.get(item, None)
-
-if __name__ == '__main__':
-    template = TemplateParser(template_file='samples/pixiv_user_template.html')
-    template.save_template('samples/pixiv_user_template.min.html')
-    parser = WebPageParser(template_file='samples/pixiv_user_template.min.html')
-    data = parser.parser(page_file='samples/pixiv_user.html')
-    print(data)

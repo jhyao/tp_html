@@ -1,7 +1,7 @@
 import json
 import timefunc
 
-from html_parser import *
+from tp_html import *
 
 def test():
     template = TemplateParser(template_file='samples/basic_template.min.html')

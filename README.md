@@ -1,4 +1,4 @@
-# HTML Parser
+# Template Parser HTML
 ## Introduction
 This tool can help get useful data from html web page. It parses html page with the template file which marks data that you need with special attributes. The template file positions html blocks that contain data, and describes types, names and structures of data. You can modify an example page file to get it, or write a basic html structure that can position your data. I suggest you to use the first method, the tool can delete irrelevant parts and organize html tree automatically.
 ## How to use

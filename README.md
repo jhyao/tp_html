@@ -380,7 +380,7 @@ minimal template:
     <p-data selector="div.layout-column-1 > div.ui-layout-west > div._user-profile-card > div.profile > a.user-name" p-value="true" p-type="string" p-name="name"></p-data>
 </p-data>
 ```
-# Benchmark
+# Test
 Time test for templates in samples folder. Test tool is [timefunc](https://github.com/jhyao/functime)  
 test code:
 ```python

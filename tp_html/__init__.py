@@ -1,16 +1,16 @@
-
-name = 'tp_html'
-__all__ = ['TemplateParser', 'WebPageParser']
-
 from html.parser import HTMLParser
 import logging
 
 import requests
 from bs4 import BeautifulSoup
 
+name = 'tp_html'
+__all__ = ['Template', 'ThtmlParser']
+
 logging.basicConfig(level=logging.DEBUG)
 
 logger = logging.getLogger(__name__)
+
 
 class PNode(object):
     def __init__(self, tag, selector=None, is_data=False, data_type=None, data_items=None, data_names=None,
@@ -57,8 +57,8 @@ class PTree(object):
             self.pre_travel(child, action=action, *args, **kwargs)
 
 
-class TemplateParser(HTMLParser):
-    ignore_tags = ['area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input',
+class Template(HTMLParser):
+    non_end_tags = ['area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input',
                    'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr']
 
     def __init__(self, template_file=None, template_text=None, encoding='utf-8'):
@@ -89,7 +89,7 @@ class TemplateParser(HTMLParser):
             self._stack[-1].add_child(node)
         if not self.root:
             self.root = node
-        if tag not in self.ignore_tags:
+        if tag not in self.non_end_tags:
             self._stack.append(node)
 
     def _make_node(self, attrs, tag):
@@ -119,7 +119,7 @@ class TemplateParser(HTMLParser):
         return tag + id + cls
 
     def handle_endtag(self, tag):
-        if tag in self.ignore_tags:
+        if tag in self.non_end_tags:
             return
         if self._stack:
             if self._stack[-1].tag == tag:
@@ -177,12 +177,15 @@ class TemplateParser(HTMLParser):
         root.data_items = child.data_items
         root.data_type = child.data_type
 
-    def save(self, file_path):
-        f = open(file_path, 'x')
+    def save(self, file_path, force=True):
+        if force:
+            f = open(file_path, 'w')
+        else:
+            f = open(file_path, 'x')
         self._save_tree(self.root, f)
         f.close()
 
-    def _save_tree(self, root:PNode, f, level=0):
+    def _save_tree(self, root: PNode, f, level=0):
         line = '    ' * level + '<p-data'
         if root.selector:
             line += ' selector="{}"'.format(root.selector)
@@ -206,9 +209,10 @@ class TemplateParser(HTMLParser):
             line += '></p-data>\n'
             f.write(line)
 
-class WebPageParser(object):
+
+class ThtmlParser(object):
     def __init__(self, template=None, template_file=None, template_text=None):
-        self.template = template or TemplateParser(template_file=template_file, template_text=template_text)
+        self.template = template or Template(template_file=template_file, template_text=template_text)
 
     def parse(self, page_url=None, page_file=None, page_text=None, encoding='utf-8'):
         if page_url:
@@ -238,9 +242,7 @@ class WebPageParser(object):
         else:
             return soup
 
-
     def _parse(self, soup, node:PNode):
-        data = None
         if node.is_data:
             if node.data_type == 'list':
                 data = self._parser_list(soup, node)

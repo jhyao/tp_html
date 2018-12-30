@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="tp_html",
-    version="0.0.2",
+    version="0.1.1",
     author="jhyao",
     author_email="yaojinhonggg@gmail.com",
     description="Get data from html",
@@ -13,6 +13,9 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/jhyao/tp_html",
     packages=setuptools.find_packages(),
+    install_requires=[
+          'beautifulsoup4'
+      ],
     classifiers=(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

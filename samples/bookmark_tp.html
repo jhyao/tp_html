@@ -1,0 +1,15 @@
+<p-data selector="#wrapper > div.layout-a > div.layout-column-2 > div._unit.manage-unit > form">
+    <p-data selector="div.display_editable_works > ul" p-value="true" p-type="list">
+        <p-data selector="li.image-item" p-value="true" p-type="dict">
+            <p-data selector="a.work._work" p-value="true" p-name="url" p-item="href">
+                <!--<p-data selector="div._layout-thumbnail > img.ui-scroll-view" p-value="true" p-name="illust_id tags type" p-item="data-id data-tags data-type"></p-data>-->
+                <div class="_layout-thumbnail">
+                    <img class="ui-scroll-view" p-value="true" p-name="illust_id tags type" p-item="data-id data-tags data-type"/>
+                </div>
+            </p-data>
+            <p-data selector="a:nth-of-type(2) > h1" p-value="true" p-name="title"></p-data>
+            <p-data selector="a:nth-of-type(3)" p-value="true" p-name="user_name user_id" p-item="data-user-name data-user-id"></p-data>
+            <p-data selector="ul > li > a" p-value="true" p-name="fav_count" p-item="data-tooltip"></p-data>
+        </p-data>
+    </p-data>
+</p-data>

@@ -6,18 +6,18 @@ pip install tp_html
 ```
 ## How to use
 ```python
-from tp_html import WebPageParser, TemplateParser
+from tp_html import Template, ThtmlParser
 
 # get template
-template = TemplateParser(template_file='samples/basic_template.html')
+template = Template(template_file='samples/basic_template.html')
 
 # save template
 template.save('samples/basic_template.min.html')
 
 # get parser
-parser = WebPageParser(template_file='samples/basic_template.html')
-parser = WebPageParser(template_text='...')
-parser = WebPageParser(template=template)
+parser = ThtmlParser(template_file='samples/basic_template.html')
+parser = ThtmlParser(template_text='...')
+parser = ThtmlParser(template=template)
 
 # parse data
 data = parser.parse(page_file='samples/basic_sample.html', encoding='urf-8')
@@ -384,8 +384,8 @@ minimal template:
 Time test for templates in samples folder. Test tool is [timefunc](https://github.com/jhyao/functime)  
 test code:
 ```python
-parser = WebPageParser(template_file='samples/basic_template.html')
-functime.func_time(TemplateParser, template_file='samples/basic_template.html')
+parser = ThtmlParser(template_file='samples/basic_template.html')
+functime.func_time(ThtmlParser, template_file='samples/basic_template.html')
 functime.func_time(parser.parse, page_file='samples/basic_sample.html')
 ```
 result:
